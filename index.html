@@ -55,10 +55,16 @@
 
   <!-- VIDEO INTRO -->
   <section class="video-intro" aria-hidden="true">
-    <video class="video-intro-video" autoplay muted loop playsinline>
-      <source src="assets/video/hero-loop-mobile.mp4" type="video/mp4" media="(max-aspect-ratio: 4/3)">
-      <source src="assets/video/hero-loop.mp4" type="video/mp4">
-    </video>
+    <video class="video-intro-video" id="heroVideo" autoplay muted loop playsinline></video>
+    <script>
+      (function () {
+        var v = document.getElementById("heroVideo");
+        var isPortrait = window.matchMedia("(max-aspect-ratio: 4/3)").matches;
+        v.src = isPortrait ? "assets/video/hero-loop-mobile.mp4" : "assets/video/hero-loop.mp4";
+        var playPromise = v.play();
+        if (playPromise) playPromise.catch(function () {});
+      })();
+    </script>
   </section>
 
   <!-- HERO -->
