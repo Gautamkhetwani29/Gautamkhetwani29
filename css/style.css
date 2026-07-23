@@ -1589,6 +1589,14 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
 }
 
+.phone-field { display: flex; gap: 8px; }
+.phone-field select {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 100px;
+}
+.phone-field input { flex: 1 1 auto; }
+
 .form-row input,
 .form-row select {
   width: 100%;

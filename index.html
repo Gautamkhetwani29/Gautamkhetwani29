@@ -789,7 +789,10 @@
       </div>
       <div class="form-row">
         <label for="pgPhone">Phone</label>
-        <input type="tel" id="pgPhone" name="phone" placeholder="+91 98765 43210" required>
+        <div class="phone-field">
+          <select id="pgCountryCode" name="countryCode" aria-label="Country code"></select>
+          <input type="tel" id="pgPhone" name="phone" placeholder="98765 43210" required>
+        </div>
       </div>
       <div class="form-row">
         <label for="pgProfession">Profession</label>
