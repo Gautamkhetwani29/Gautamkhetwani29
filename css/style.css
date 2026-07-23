@@ -244,6 +244,14 @@ a { color: inherit; text-decoration: none; }
   border-bottom-color: var(--border);
   background: rgba(10, 11, 10, 0.85);
 }
+.site-header.nav-open {
+  /* Some mobile in-app browsers (e.g. Instagram's WebView) render backdrop-filter
+     inconsistently on nested content, which can make the open menu's CTA button
+     look washed out. Force a fully opaque, unblurred header while it's open. */
+  background: var(--bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 
 .header-inner {
   display: flex;
@@ -536,7 +544,10 @@ a { color: inherit; text-decoration: none; }
 .hero-float-2 { bottom: 6%; right: -10%; }
 @media (max-width: 500px) {
   .hero-float-1 { left: -2%; }
-  .hero-float-2 { right: -2%; }
+  /* Anchored to the bottom, this card was overlapping the "Freelance Meta Ads
+     Specialist" caption tag on smaller photo cards. Move it to a clear middle
+     band on the right instead. */
+  .hero-float-2 { right: -2%; bottom: auto; top: 42%; }
 }
 
 .float-value {
@@ -1306,7 +1317,13 @@ a { color: inherit; text-decoration: none; }
   border-radius: 0;
   border-bottom: 1px solid var(--border);
 }
-.testimonial-thumb.proof-thumb img { object-position: top; }
+.testimonial-thumb.proof-thumb img {
+  object-position: top;
+  /* Source screenshots are capped at 828px wide; on high-density phone
+     screens the card can render slightly larger than that, softening the
+     image. A small contrast/saturation lift makes it read crisper. */
+  filter: contrast(1.08) saturate(1.05);
+}
 
 .testimonial-body { padding: var(--space-5); }
 

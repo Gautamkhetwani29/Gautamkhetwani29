@@ -17,17 +17,22 @@
   const mobileNav = document.getElementById("mobileNav");
   navToggle.addEventListener("click", () => {
     const open = mobileNav.classList.toggle("open");
+    header.classList.toggle("nav-open", open);
     navToggle.setAttribute("aria-expanded", String(open));
     navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   });
   mobileNav.querySelectorAll("a").forEach((a) => {
     a.addEventListener("click", () => {
       mobileNav.classList.remove("open");
+      header.classList.remove("nav-open");
       navToggle.setAttribute("aria-expanded", "false");
     });
   });
 
-  /* ---------------- Qualify form (static site: builds a mailto, no backend) ---------------- */
+  /* ---------------- Qualify form (static site: builds a mailto + logs to a Google Sheet) ---------------- */
+  // Paste your deployed Google Apps Script Web App URL here once it's set up (see setup notes).
+  const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwq675jRYot5ghU8fmgBrWtzr0J-NB1WDo90VZT9dWwOFFnwckOCOMpcIwK2kAYTm38/exec";
+
   const qualifyForm = document.getElementById("qualifyForm");
   const qualifyNote = document.getElementById("qualifyNote");
   if (qualifyForm && qualifyNote) {
@@ -38,6 +43,18 @@
       const roas = data.get("roas").trim();
       const bottleneck = data.get("bottleneck").trim();
       const site = data.get("site").trim();
+
+      if (SHEET_WEB_APP_URL) {
+        // Apps Script web apps don't return CORS headers for cross-origin requests,
+        // so this is fire-and-forget: we can't read the response, but the POST
+        // still reaches the script and gets logged.
+        fetch(SHEET_WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({ spend, roas, bottleneck, site }),
+        }).catch(() => {});
+      }
 
       const subject = encodeURIComponent(`Meta Ads fit check: ${site}`);
       const body = encodeURIComponent(

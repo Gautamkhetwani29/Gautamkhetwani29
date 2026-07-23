@@ -6,7 +6,7 @@ function Crop-Resize-Image {
         [string]$OutPath,
         [int]$Left, [int]$Top, [int]$Right, [int]$Bottom,
         [int]$MaxWidth = 900,
-        [int64]$Quality = 86
+        [int64]$Quality = 96
     )
     $src = [System.Drawing.Image]::FromFile($InPath)
     $cropW = $Right - $Left
@@ -46,7 +46,7 @@ $root = "D:\Claude\website portfolio"
 $src  = "$root\Gautam Portfolio assets\PS"
 $dst  = "$root\assets\img\testimonials"
 
-Remove-Item "$dst\nursery-11l-thread.jpg", "$dst\nursery-target-thread.jpg", "$dst\nursery-june-thread.jpg" -ErrorAction SilentlyContinue
+Remove-Item "$dst\nursery-11l-thread.jpg", "$dst\nursery-target-thread.jpg", "$dst\nursery-june-thread.jpg", "$dst\nursery-cross-11l-thread.jpg", "$dst\nursery-hey-everyone-thread.jpg", "$dst\nursery-good-work-thread.jpg" -ErrorAction SilentlyContinue
 
 # left, top, right, bottom (source images are 828x1792, coordinates measured via ruler overlay)
 Crop-Resize-Image -InPath "$src\P.S Client Feedback4.1.png"  -OutPath "$dst\nursery-cross-11l-thread.jpg"    -Left 0 -Top 195 -Right 828 -Bottom 1030
