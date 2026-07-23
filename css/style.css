@@ -1758,6 +1758,44 @@ a { color: inherit; text-decoration: none; }
 }
 .lightbox-close:hover { border-color: var(--accent); color: var(--accent); }
 
+/* ---------- portfolio download gate ---------- */
+.portfolio-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(6, 7, 6, 0.92);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+.portfolio-gate[hidden] { display: none; }
+
+.portfolio-gate-card {
+  width: min(420px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin: auto;
+}
+.portfolio-gate-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: var(--space-2) 0 var(--space-2);
+}
+.portfolio-gate-sub {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.5;
+  margin: 0 0 var(--space-5);
+}
+.portfolio-gate-card .form-row { margin-bottom: var(--space-3); }
+.portfolio-gate-submit { width: 100%; margin-top: var(--space-2); }
+
 /* ============================================================
    SCROLL REVEAL base states (JS adds .is-visible)
    ============================================================ */

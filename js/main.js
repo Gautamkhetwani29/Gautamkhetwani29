@@ -219,6 +219,64 @@
     if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
   });
 
+  /* ---------------- Portfolio download gate (collects lead info, then opens the PDF) ---------------- */
+  // Paste your deployed Google Apps Script Web App URL here once it's set up (see setup notes).
+  const PORTFOLIO_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw1YVsReh0lepNUWkqy-DU6dPQfSUK9radscSvVKu0iwtvxFHD5ZMXHx3VKuJtI6I2VPA/exec";
+
+  const portfolioGate = document.getElementById("portfolioGate");
+  const portfolioGateTrigger = document.getElementById("portfolioGateTrigger");
+  const portfolioGateClose = document.getElementById("portfolioGateClose");
+  const portfolioGateForm = document.getElementById("portfolioGateForm");
+  let portfolioPdfUrl = "";
+  let portfolioLastFocusedEl = null;
+
+  function openPortfolioGate() {
+    portfolioLastFocusedEl = document.activeElement;
+    portfolioPdfUrl = portfolioGateTrigger.getAttribute("data-pdf-url");
+    portfolioGate.hidden = false;
+    document.body.style.overflow = "hidden";
+    document.getElementById("pgName").focus();
+  }
+
+  function closePortfolioGate() {
+    portfolioGate.hidden = true;
+    document.body.style.overflow = "";
+    if (portfolioLastFocusedEl) portfolioLastFocusedEl.focus();
+  }
+
+  if (portfolioGate && portfolioGateTrigger && portfolioGateForm) {
+    portfolioGateTrigger.addEventListener("click", openPortfolioGate);
+    portfolioGateClose.addEventListener("click", closePortfolioGate);
+    portfolioGate.addEventListener("click", (e) => {
+      if (e.target === portfolioGate) closePortfolioGate();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !portfolioGate.hidden) closePortfolioGate();
+    });
+
+    portfolioGateForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(portfolioGateForm);
+      const name = data.get("name").trim();
+      const email = data.get("email").trim();
+      const phone = data.get("phone").trim();
+      const profession = data.get("profession").trim();
+
+      if (PORTFOLIO_SHEET_WEB_APP_URL) {
+        fetch(PORTFOLIO_SHEET_WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({ name, email, phone, profession }),
+        }).catch(() => {});
+      }
+
+      window.open(portfolioPdfUrl, "_blank", "noopener");
+      portfolioGateForm.reset();
+      closePortfolioGate();
+    });
+  }
+
   /* ---------------- Optional GSAP enhancement: subtle hero parallax ---------------- */
   window.addEventListener("load", () => {
     if (prefersReducedMotion) return;
