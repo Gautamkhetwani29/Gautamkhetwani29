@@ -673,8 +673,9 @@ a { color: inherit; text-decoration: none; }
 
 .case-study {
   border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
   border-radius: var(--radius-lg);
-  background: linear-gradient(160deg, var(--surface), var(--bg-soft));
+  background: rgba(64, 179, 121, 0.08);
   padding: var(--space-6);
   margin-bottom: var(--space-5);
 }
