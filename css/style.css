@@ -680,7 +680,15 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: var(--space-5);
 }
 @media (max-width: 640px) {
-  .case-study { padding: var(--space-4); border-radius: var(--radius-md); }
+  .case-study {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    /* The highlighter-style green tint reads well on desktop but felt like
+       too much on smaller screens, so revert to a plain neutral card there. */
+    background: linear-gradient(160deg, var(--surface), var(--bg-soft));
+    border-left-width: 1px;
+    border-left-color: var(--border);
+  }
 }
 
 .case-head {
