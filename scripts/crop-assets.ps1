@@ -53,9 +53,15 @@ Crop-Resize-Image -InPath "$src\Piu\1 Jul-31 Oct'25 Meta ads Before.png" -OutPat
 Crop-Resize-Image -InPath "$src\Piu\1-30 Nov'25 Meta ads After.png" -OutPath "$dst\piu-ads-after.jpg" -Left 90 -Top 440 -Right 1920 -Bottom 940
 Crop-Resize-Image -InPath "$src\Piu\1-30 Nov'25 shopify After.png" -OutPath "$dst\piu-shopify-after.jpg" -Left 300 -Top 200 -Right 1920 -Bottom 615
 
+# D2C nursery brand: all four quarters of both dashboards, so the case study
+# can show the progression rather than just the endpoints.
 Crop-Resize-Image -InPath "$src\PS\Q1.png" -OutPath "$dst\nursery-q1.jpg" -Left 85 -Top 320 -Right 1920 -Bottom 815
+Crop-Resize-Image -InPath "$src\PS\Q2.png" -OutPath "$dst\nursery-q2.jpg" -Left 85 -Top 320 -Right 1920 -Bottom 815
+Crop-Resize-Image -InPath "$src\PS\Q3.png" -OutPath "$dst\nursery-q3.jpg" -Left 85 -Top 320 -Right 1920 -Bottom 815
 Crop-Resize-Image -InPath "$src\PS\Q4.png" -OutPath "$dst\nursery-q4.jpg" -Left 85 -Top 320 -Right 1920 -Bottom 815
 Crop-Resize-Image -InPath "$src\PS\shopify Q1.png" -OutPath "$dst\nursery-shopify-q1.jpg" -Left 300 -Top 10 -Right 1920 -Bottom 435
+Crop-Resize-Image -InPath "$src\PS\shopify Q2.png" -OutPath "$dst\nursery-shopify-q2.jpg" -Left 300 -Top 10 -Right 1920 -Bottom 435
+Crop-Resize-Image -InPath "$src\PS\shopify Q3.png" -OutPath "$dst\nursery-shopify-q3.jpg" -Left 300 -Top 10 -Right 1920 -Bottom 435
 Crop-Resize-Image -InPath "$src\PS\shopify Q4.png" -OutPath "$dst\nursery-shopify-q4.jpg" -Left 300 -Top 10 -Right 1920 -Bottom 435
 
 Write-Output "DONE"
