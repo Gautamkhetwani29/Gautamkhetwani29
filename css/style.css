@@ -4,20 +4,37 @@
    ============================================================ */
 
 :root {
-  --bg: #0a0b0a;
-  --bg-soft: #0d0f0d;
-  --surface: #131512;
-  --surface-2: #181a17;
+  /* ---- dark ground: hero, logo strip, about, final CTA, footer, header ---- */
+  --bg: #0d1210;
+  --bg-soft: #101614;
+  --surface: #151c18;
+  --surface-2: #1d2620;
   --border: rgba(255, 255, 255, 0.09);
   --border-strong: rgba(255, 255, 255, 0.16);
 
   --text: #f4f5f1;
-  --text-muted: #9a9d95;
-  --text-faint: #878b82;
+  --text-muted: #8c948d;
+  --text-faint: #868d85; /* clears 4.5:1 on --surface-2, the darkest ground it lands on */
 
-  --accent: #40b379;
-  --accent-dim: #349468;
-  --accent-glow: rgba(64, 179, 121, 0.22);
+  --accent: #34d07c;
+  --accent-dim: #2aa866;
+  --accent-glow: rgba(52, 208, 124, 0.22);
+  --on-accent: #06170e;
+  --before: #c4844f;
+
+  /* ---- cream ground: consumed by the light-section block at the end of
+     this file. Declared here so every token has one home. ---- */
+  --cream: #f5f3ea;
+  --cream-2: #fffdf7;
+  --cream-3: #edeadf;
+  --cream-line: #e3e0d2;
+  --cream-line-strong: #cfcbb9;
+  --on-cream: #14180f;
+  --on-cream-muted: #666b5c;
+  --on-cream-faint: #636858; /* small uppercase labels; clears 4.5:1 on cream and on --cream-3 */
+  --green-ink: #0f6b41;
+  --green-ink-dim: #2e7d55;
+  --before-ink: #a45e24;
 
   --danger: #ff6b57;
 
@@ -101,7 +118,7 @@ a { color: inherit; text-decoration: none; }
   left: -9999px;
   top: 0;
   background: var(--accent);
-  color: #0a0b0a;
+  color: var(--on-accent);
   padding: 12px 20px;
   z-index: 1000;
   border-radius: 0 0 8px 0;
@@ -208,7 +225,7 @@ a { color: inherit; text-decoration: none; }
 
 .btn-primary {
   background: var(--accent);
-  color: #0a0b0a;
+  color: var(--on-accent);
   box-shadow: 0 0 0 0 var(--accent-glow);
 }
 @media (hover: hover) {
@@ -216,7 +233,7 @@ a { color: inherit; text-decoration: none; }
      touch devices can trigger and "stick" this state, leaving the button
      looking washed out in a mismatched pale color until tapped elsewhere. */
   .btn-primary:hover {
-    background: #d9ff7a;
+    background: #5ee09a;
     box-shadow: 0 6px 24px -4px var(--accent-glow);
   }
 }
@@ -243,7 +260,7 @@ a { color: inherit; text-decoration: none; }
   top: 0;
   z-index: 100;
   width: 100%;
-  background: rgba(10, 11, 10, 0.6);
+  background: rgba(13, 18, 16, 0.6);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid transparent;
@@ -251,7 +268,7 @@ a { color: inherit; text-decoration: none; }
 }
 .site-header.scrolled {
   border-bottom-color: var(--border);
-  background: rgba(10, 11, 10, 0.85);
+  background: rgba(13, 18, 16, 0.85);
 }
 .site-header.nav-open {
   /* Some mobile in-app browsers (e.g. Instagram's WebView) render backdrop-filter
@@ -280,7 +297,7 @@ a { color: inherit; text-decoration: none; }
   height: 34px;
   border-radius: 9px;
   background: var(--accent);
-  color: #0a0b0a;
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -527,7 +544,7 @@ a { color: inherit; text-decoration: none; }
   bottom: var(--space-3);
   width: fit-content;
   max-width: calc(100% - var(--space-3) * 2);
-  background: rgba(10, 11, 10, 0.72);
+  background: rgba(13, 18, 16, 0.72);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -658,7 +675,7 @@ a { color: inherit; text-decoration: none; }
 }
 .logo-track img:hover {
   filter: grayscale(0) opacity(1);
-  box-shadow: 0 0 0 1.5px var(--accent), 0 0 40px 8px rgba(64, 179, 121, 0.55);
+  box-shadow: 0 0 0 1.5px var(--accent), 0 0 40px 8px rgba(52, 208, 124, 0.55);
   transform: translateY(-3px);
 }
 
@@ -675,7 +692,8 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   border-left: 4px solid var(--accent);
   border-radius: var(--radius-lg);
-  background: rgba(64, 179, 121, 0.08);
+  /* Highlighter tint, kept from the dark build — now mixed for the cream ground. */
+  background: rgba(15, 107, 65, 0.05);
   padding: var(--space-6);
   margin-bottom: var(--space-5);
 }
@@ -852,7 +870,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.04em;
-  background: rgba(10, 11, 10, 0.78);
+  background: rgba(13, 18, 16, 0.78);
   border: 1px solid var(--border);
   padding: 4px 8px;
   border-radius: var(--radius-full);
@@ -866,7 +884,7 @@ a { color: inherit; text-decoration: none; }
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(10, 11, 10, 0.78);
+  background: rgba(13, 18, 16, 0.78);
   border: 1px solid var(--border);
   color: var(--text);
   display: flex;
@@ -1099,7 +1117,7 @@ a { color: inherit; text-decoration: none; }
 .mw-dot[data-quarter-index="1"] { transition-delay: 900ms; }
 .mw-dot[data-quarter-index="2"] { transition-delay: 1500ms; }
 .mw-dot[data-quarter-index="3"] { transition-delay: 2100ms; }
-.mw-dot.mw-dot-active { r: 6; filter: drop-shadow(0 0 6px rgba(64, 179, 121, 0.7)); }
+.mw-dot.mw-dot-active { r: 6; filter: drop-shadow(0 0 6px rgba(52, 208, 124, 0.7)); }
 
 .mw-dot-hit {
   position: absolute;
@@ -1197,7 +1215,7 @@ a { color: inherit; text-decoration: none; }
 .mw-period-option[aria-selected="true"] {
   color: var(--accent);
   font-weight: 700;
-  background: rgba(64, 179, 121, 0.14);
+  background: rgba(52, 208, 124, 0.14);
 }
 .mw-period-option svg { opacity: 0; color: var(--accent); flex-shrink: 0; }
 .mw-period-option[aria-selected="true"] svg { opacity: 1; }
@@ -1350,12 +1368,12 @@ a { color: inherit; text-decoration: none; }
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--surface);
-  box-shadow: 0 24px 60px -28px rgba(64, 179, 121, 0.4), 0 10px 26px -14px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 24px 60px -28px rgba(52, 208, 124, 0.4), 0 10px 26px -14px rgba(0, 0, 0, 0.55);
   transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .testimonial-card:hover {
   border-color: var(--accent-dim);
-  box-shadow: 0 28px 70px -26px rgba(64, 179, 121, 0.55), 0 12px 30px -14px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 28px 70px -26px rgba(52, 208, 124, 0.55), 0 12px 30px -14px rgba(0, 0, 0, 0.6);
 }
 
 .testimonial-thumb.proof-thumb {
@@ -1662,7 +1680,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   padding: var(--space-8) var(--space-5);
-  background: radial-gradient(circle at 50% 0%, rgba(52, 148, 104, 0.45), transparent 65%), var(--surface);
+  background: radial-gradient(circle at 50% 0%, rgba(42, 168, 102, 0.45), transparent 65%), var(--surface);
 }
 
 .cta-title {
@@ -1847,4 +1865,110 @@ a { color: inherit; text-decoration: none; }
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ============================================================
+   LIGHT SECTIONS — cream ground
+   ------------------------------------------------------------
+   Results, testimonials and process switch to the cream ground by
+   re-declaring the theme tokens on the section itself. Custom properties
+   inherit, so every component inside re-themes without any markup change.
+   Only the handful of components that hardcode a colour need an override,
+   and those follow underneath.
+   Appended last so no earlier media query can undo it.
+   ============================================================ */
+.results,
+.testimonials,
+.process {
+  --bg: var(--cream);
+  --bg-soft: var(--cream);
+  --surface: var(--cream-2);
+  --surface-2: var(--cream-3);
+  --border: var(--cream-line);
+  --border-strong: var(--cream-line-strong);
+
+  --text: var(--on-cream);
+  --text-muted: var(--on-cream-muted);
+  --text-faint: var(--on-cream-faint);
+
+  --accent: var(--green-ink);
+  --accent-dim: var(--green-ink-dim);
+  --accent-glow: rgba(15, 107, 65, 0.18);
+  --on-accent: var(--cream-2);
+  --before: var(--before-ink);
+
+  background: var(--cream);
+  color: var(--text);
+}
+
+/* Testimonials sit a shade brighter so the light WhatsApp screenshots
+   land on a matching surface instead of floating. */
+.testimonials { background: var(--cream-2); }
+.testimonials { --surface: var(--cream); --bg-soft: var(--cream); }
+
+/* ------------------------------------------------------------
+   CASE STUDY CARDS — dark islands on the cream ground
+   ------------------------------------------------------------
+   Piu Snooze, the nursery account and Basslila keep the original
+   black-and-green treatment. Only the Results section head sits on cream;
+   each card re-declares the dark tokens, so everything inside it — the
+   metrics widget, the before/after grids, the proof thumbnails, the
+   expanded detail — renders exactly as it did before the recolour.
+   ------------------------------------------------------------ */
+.results .case-study {
+  --bg: #0d1210;
+  --bg-soft: #101614;
+  --surface: #151c18;
+  --surface-2: #1d2620;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #f4f5f1;
+  --text-muted: #8c948d;
+  --text-faint: #868d85; /* clears 4.5:1 on --surface-2, the darkest ground it lands on */
+
+  --accent: #34d07c;
+  --accent-dim: #2aa866;
+  --accent-glow: rgba(52, 208, 124, 0.22);
+  --on-accent: #06170e;
+  --before: #c4844f;
+
+  /* Solid dark, with the highlighter tint layered over it so the card is
+     opaque against the cream instead of letting it bleed through. */
+  background: linear-gradient(0deg, rgba(52, 208, 124, 0.07), rgba(52, 208, 124, 0.07)), var(--bg);
+  color: var(--text);
+}
+
+/* Matches the existing narrow-screen card treatment, restated at this
+   specificity so the rule above doesn't override it on mobile. */
+@media (max-width: 640px) {
+  .results .case-study {
+    /* Longhands, so the card keeps an opaque colour underneath the gradient.
+       The `background` shorthand would reset background-color to transparent
+       and let the cream section show through if the gradient ever fails. */
+    background-image: linear-gradient(160deg, var(--surface), var(--bg-soft));
+    background-color: var(--bg);
+  }
+}
+
+/* The chart geometry carries the old #40b379 as a presentation attribute in
+   the markup. Pointing it at the token keeps the charts the same green as
+   everything else without editing the SVG. */
+.results .case-study .mw-chart stop { stop-color: var(--accent); }
+.results .case-study .mw-line { stroke: var(--accent); }
+.results .case-study .mw-dot { fill: var(--accent); }
+
+/* "Before" figures pick up the warm tone so the after-value has
+   something to read against. Resolves to the dark-ground amber inside a
+   card, and to the deeper amber anywhere on cream. */
+.metric-before-after .before { color: var(--before); }
+
+/* Proof-screenshot chrome on the cream sections: these badges sit on top
+   of the screenshots themselves, not on the section ground, so they stay
+   dark with light text. */
+.testimonials .proof-thumb-label,
+.testimonials .proof-thumb-zoom {
+  background: rgba(13, 18, 16, 0.78);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f4f5f1;
 }
