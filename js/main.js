@@ -101,7 +101,17 @@
     revealEls.forEach((el) => revealObserver.observe(el));
   }
 
-  /* ---------------- Count-up stats ---------------- */
+  /* ---------------- Count-up stats ----------------
+     Every [data-count-to] element already carries its final figure as
+     its text in the markup, and nothing zeroes one until the instant it
+     starts animating. So if this script never runs, or the observer
+     never fires for a given element, the real number stays on screen
+     instead of the placeholder zero that used to sit there. On a page
+     whose whole argument is that the figures are real, showing "₹0" is
+     the worst way for it to fail.
+
+     When editing a figure, change both: the text and the data-count-to
+     value are the same number. */
   const countEls = document.querySelectorAll("[data-count-to]");
 
   function animateCount(el) {
@@ -134,18 +144,22 @@
     }
   }
 
-  const countObserver = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          animateCount(entry.target);
-          obs.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.4 }
-  );
-  countEls.forEach((el) => countObserver.observe(el));
+  // Without observer support there is nothing to do: the figures are
+  // already correct in the markup, they simply arrive without counting.
+  if ("IntersectionObserver" in window) {
+    const countObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    countEls.forEach((el) => countObserver.observe(el));
+  }
 
   /* ---------------- Case study expand/collapse ---------------- */
   function toggleCaseStudy(id) {
