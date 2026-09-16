@@ -19,6 +19,8 @@
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2340B379'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-weight='700' font-size='28' fill='%230A0B0A' text-anchor='middle'%3EGK%3C/text%3E%3C/svg%3E">
 
+<script>document.documentElement.classList.add("js");</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -66,14 +68,37 @@
 
   <!-- VIDEO INTRO -->
   <section class="video-intro" aria-hidden="true">
-    <video class="video-intro-video" id="heroVideo" autoplay muted loop playsinline></video>
+    <video class="video-intro-video" id="heroVideo" autoplay muted loop playsinline preload="none"></video>
     <script>
       (function () {
         var v = document.getElementById("heroVideo");
         var isPortrait = window.matchMedia("(max-aspect-ratio: 4/3)").matches;
-        v.src = isPortrait ? "assets/video/hero-loop-mobile.mp4" : "assets/video/hero-loop.mp4";
-        var playPromise = v.play();
-        if (playPromise) playPromise.catch(function () {});
+        var src = isPortrait ? "assets/video/hero-loop-mobile.mp4" : "assets/video/hero-loop.mp4";
+
+        // The loop is 1.2MB and decorative, and it opens on a frame that
+        // is almost pure black — the same colour this section already
+        // paints instantly. Fetching it up front only starves the real
+        // content of bandwidth, so it waits until the rest has loaded.
+        function start() {
+          v.src = src;
+          var playPromise = v.play();
+          if (playPromise) playPromise.catch(function () {});
+        }
+
+        var started = false;
+        function startOnce() {
+          if (started) return;
+          started = true;
+          start();
+        }
+
+        if (document.readyState === "complete") startOnce();
+        else {
+          window.addEventListener("load", startOnce, { once: true });
+          // Don't let one slow or hanging request keep the loop off the
+          // page entirely: load fires late or never in that case.
+          setTimeout(startOnce, 3000);
+        }
       })();
     </script>
   </section>
@@ -103,7 +128,7 @@
 
       <div class="hero-visual reveal-up">
         <div class="hero-photo-card">
-          <img src="assets/img/headshot.jpg" width="1000" height="1000" alt="Gautam Khetwani, Meta Ads Specialist" class="hero-photo">
+          <img src="assets/img/headshot.jpg" width="1000" height="1000" alt="Gautam Khetwani, Meta Ads Specialist" class="hero-photo" loading="lazy" decoding="async">
           <div class="hero-photo-tag">
             <span class="tag-label">Raipur, India</span>
             <span class="tag-sub">Freelance Meta Ads Specialist</span>
@@ -147,29 +172,29 @@
     </div>
     <div class="logo-marquee reveal-up" role="list" aria-label="Client brand logos">
       <div class="logo-track">
-        <img src="assets/img/logos/logo-01.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-02.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-03.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-04.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-05.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-06.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-07.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-08.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-09.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-10.png" alt="" width="72" height="72">
-        <img src="assets/img/logos/logo-11.png" alt="" width="72" height="72">
+        <img src="assets/img/logos/logo-01.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-02.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-03.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-04.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-05.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-06.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-07.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-08.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-09.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-10.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-11.png" alt="" width="72" height="72" loading="lazy" decoding="async">
         <!-- duplicate set for seamless marquee -->
-        <img src="assets/img/logos/logo-01.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-02.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-03.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-04.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-05.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-06.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-07.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-08.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-09.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-10.png" alt="" width="72" height="72" aria-hidden="true">
-        <img src="assets/img/logos/logo-11.png" alt="" width="72" height="72" aria-hidden="true">
+        <img src="assets/img/logos/logo-01.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-02.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-03.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-04.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-05.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-06.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-07.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-08.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-09.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-10.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="assets/img/logos/logo-11.png" alt="" width="72" height="72" aria-hidden="true" loading="lazy" decoding="async">
       </div>
     </div>
   </section>
