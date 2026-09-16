@@ -520,4 +520,65 @@
 
     selectQuarter(3);
   })();
+
+  /* ---------------- Case-study intro videos ----------------
+     One clip sits at the top of each case-study card. Fetching all
+     three up front would cost tens of megabytes, so each stays without
+     a source until its card approaches the viewport, and plays only
+     while it is on screen. No controls, muted, looping: the same
+     treatment as the hero loop. */
+  (() => {
+    const videos = Array.from(document.querySelectorAll(".case-video-el"));
+    if (!videos.length || prefersReducedMotion) return;
+
+    // Same test the hero uses to choose between the full-size file and
+    // the lighter one cut for phones.
+    const wantsMobile = window.matchMedia("(max-aspect-ratio: 4/3)").matches;
+
+    const load = (video) => {
+      if (video.dataset.loaded) return;
+      const src = wantsMobile ? video.dataset.videoMobile : video.dataset.videoDesktop;
+      if (!src) return;
+      video.dataset.loaded = "true";
+      video.src = src;
+    };
+
+    // Fetch a clip once its card is within a screen or so, and play it
+    // only while it is actually on screen.
+    //
+    // This is re-checked on scroll rather than driven by observer
+    // threshold crossings: a card still running its reveal animation can
+    // cross a threshold once and never cross back, which leaves a fully
+    // visible clip stopped with nothing left to restart it.
+    const sync = () => {
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      videos.forEach((video) => {
+        const box = video.getBoundingClientRect();
+        if (box.bottom > -viewportHeight && box.top < viewportHeight * 2) load(video);
+
+        const onScreen = box.bottom > viewportHeight * 0.1 && box.top < viewportHeight * 0.9;
+        if (onScreen && video.paused) {
+          const playing = video.play();
+          if (playing) playing.catch(() => {});
+        } else if (!onScreen && !video.paused) {
+          video.pause();
+        }
+      });
+    };
+
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        sync();
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    videos.forEach((video) => video.addEventListener("loadeddata", sync));
+    sync();
+  })();
 })();

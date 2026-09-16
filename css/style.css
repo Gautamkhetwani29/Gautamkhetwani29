@@ -692,6 +692,11 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   border-left: 4px solid var(--accent);
   border-radius: var(--radius-lg);
+  /* The intro video is pulled out to the card's edges, so the card
+     itself rounds off its corners. Safe to clip: the expanding detail
+     animates inside the card, and the proof-screenshot lightbox is a
+     top-level element, not a descendant. */
+  overflow: hidden;
   /* Highlighter tint, kept from the dark build — now mixed for the cream ground. */
   background: rgba(15, 107, 65, 0.05);
   padding: var(--space-6);
@@ -718,6 +723,66 @@ a { color: inherit; text-decoration: none; }
   padding-bottom: var(--space-4);
   margin-bottom: var(--space-4);
   border-bottom: 1px solid var(--border);
+}
+
+/* Case-study intro video: runs full bleed across the top of each card.
+   The clips are rendered on the same dark ground as the card, so
+   pulling them out to the card's edges leaves no seam and no stray
+   padding around them. The card clips their top corners (see the
+   overflow rule on .results .case-study), and the card's own green
+   accent border runs past them unbroken — which is why the clips
+   themselves carry no left edge. The 16/9 box is declared up front so
+   the card never shifts while the file loads, and the video is never
+   cropped at any width: the whole frame is always visible. */
+.case-video {
+  position: relative;
+  margin: calc(var(--space-6) * -1) calc(var(--space-6) * -1) var(--space-6);
+  background: var(--bg);
+}
+
+/* Soften the seam where the clip ends and the card's own content
+   begins, the same trick the hero loop uses at its bottom edge. The
+   blend has to do real work here: h264 crushes the clip's near-black
+   ground to pure black, so the video reads a shade darker than the
+   card it sits in, and a hard edge between them would show. */
+.case-video::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 24%;
+  background: linear-gradient(180deg, transparent 0%, var(--bg) 82%, var(--bg) 100%);
+  pointer-events: none;
+}
+
+/* The card is a gradient rather than a flat fill on small screens, so
+   the blend has to land on the colour the gradient actually starts at. */
+@media (max-width: 640px) {
+  .case-video::after {
+    background: linear-gradient(180deg, transparent 0%, var(--surface) 82%, var(--surface) 100%);
+  }
+}
+
+.case-video-el {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  /* Not interactive by design: no controls, nothing to click, and it
+     must not swallow taps meant for the card header above it. */
+  pointer-events: none;
+}
+
+/* The card's padding shrinks on a phone, so the pull-out has to match it. */
+@media (max-width: 640px) {
+  .case-video {
+    margin: calc(var(--space-4) * -1) calc(var(--space-4) * -1) var(--space-4);
+  }
+}
+
+/* The clips restate what the card already says in text, so when motion
+   is unwelcome they simply go away, as the hero loop does. */
+@media (prefers-reduced-motion: reduce) {
+  .case-video { display: none; }
 }
 
 .case-tag {
