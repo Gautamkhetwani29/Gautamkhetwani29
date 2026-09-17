@@ -3,8 +3,8 @@ import { Eyebrow, Rise, SceneShell } from "../shared/primitives";
 
 // Straight from the site's Basslila metric grid.
 const metrics = [
-  { value: "104", label: "Webinar sign-ups" },
-  { value: "₹415", label: "Cost per sign-up" },
+  { value: "104", label: "Meta-attributed sign-ups" },
+  { value: "₹415", label: "Cost per attributed sign-up" },
   { value: "₹43,210", label: "Ad spend (campaign)" },
   { value: "₹1L+", label: "Backend course revenue" },
 ];
