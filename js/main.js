@@ -557,24 +557,48 @@
       video.src = src;
     };
 
-    // Fetch a clip once its card is within a screen or so, and play it
-    // only while it is actually on screen.
+    // Fetch a clip once its card is within a screen or so, then play it
+    // from its title frame once the reader is actually looking at it.
     //
-    // This is re-checked on scroll rather than driven by observer
-    // threshold crossings: a card still running its reveal animation can
-    // cross a threshold once and never cross back, which leaves a fully
+    // Starting on a sliver of the clip appearing at the bottom of the
+    // screen meant it ran while the reader was still scrolling toward
+    // it, so they arrived several seconds in, part-way through a scene.
+    // It has to be mostly in view to start, and it rewinds whenever it
+    // comes back, so a clip always opens on the brand name.
+    //
+    // The two thresholds differ on purpose: starting at 55% and stopping
+    // below 25% stops a clip restarting over and over while someone
+    // scrolls slowly across the boundary.
+    const START_VISIBLE = 0.55;
+    const STOP_VISIBLE = 0.25;
+
+    // Re-checked on scroll rather than driven by observer threshold
+    // crossings: a card still running its reveal animation can cross a
+    // threshold once and never cross back, which would leave a fully
     // visible clip stopped with nothing left to restart it.
     const sync = () => {
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
       videos.forEach((video) => {
         const box = video.getBoundingClientRect();
         if (box.bottom > -viewportHeight && box.top < viewportHeight * 2) load(video);
+        if (!box.height) return;
 
-        const onScreen = box.bottom > viewportHeight * 0.1 && box.top < viewportHeight * 0.9;
-        if (onScreen && video.paused) {
+        const onScreen =
+          (Math.min(box.bottom, viewportHeight) - Math.max(box.top, 0)) / box.height;
+        const running = video.dataset.running === "true";
+
+        if (!running && onScreen >= START_VISIBLE) {
+          video.dataset.running = "true";
+          // Rewind so the clip opens where it was designed to.
+          try {
+            video.currentTime = 0;
+          } catch (e) {
+            /* seeking before metadata lands; it is already at 0 anyway */
+          }
           const playing = video.play();
           if (playing) playing.catch(() => {});
-        } else if (!onScreen && !video.paused) {
+        } else if (running && onScreen < STOP_VISIBLE) {
+          video.dataset.running = "false";
           video.pause();
         }
       });
