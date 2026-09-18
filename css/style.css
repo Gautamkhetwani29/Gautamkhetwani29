@@ -1497,10 +1497,26 @@ a { color: inherit; text-decoration: none; }
      the stats so it can be shown at full clarity, matching desktop. */
   .metrics-widget {
     display: grid;
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr), not 1fr: a 1fr track's automatic minimum is
+       min-content, so a child that cannot shrink below its own content
+       — the stats row, or the header with its period button — pushes the
+       track wider than the card. The card clips the overflow, which is
+       what was cutting the period label off its right edge. Capping the
+       minimum at 0 keeps the track inside the card and lets the children
+       wrap instead. */
+    grid-template-columns: minmax(0, 1fr);
     padding: var(--space-4);
     min-height: 0;
   }
+  /* Grid and flex children default to min-width: auto, which is the same
+     refusal to shrink one level down. */
+  .mw-head,
+  .mw-headline,
+  .mw-footer,
+  .mw-chart,
+  .mw-chart-labels { min-width: 0; }
+  .mw-head { gap: var(--space-2) var(--space-3); }
+  .mw-title { min-width: 0; }
   .mw-head { grid-row: 1; }
   .mw-headline { grid-row: 2; }
   .mw-footer { grid-row: 3; gap: var(--space-2) var(--space-4); }
