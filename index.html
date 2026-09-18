@@ -66,9 +66,12 @@
 
 <main id="main">
 
-  <!-- VIDEO INTRO -->
-  <section class="video-intro" aria-hidden="true">
-    <video class="video-intro-video" id="heroVideo" autoplay muted loop playsinline preload="none"></video>
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <!-- The loop sits behind the headline rather than above it as its own
+         full-screen section. That section opened the page on a black
+         screen with the real message one scroll down. -->
+    <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
     <script>
       (function () {
         var v = document.getElementById("heroVideo");
@@ -101,10 +104,7 @@
         }
       })();
     </script>
-  </section>
-
-  <!-- HERO -->
-  <section class="hero" id="top">
+    <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="wrap hero-inner">
       <div class="hero-copy">

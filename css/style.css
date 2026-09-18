@@ -385,41 +385,51 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   padding: var(--space-8) 0 var(--space-7);
   overflow: hidden;
-}
-
-.video-intro {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
+  /* Fill the first screen so the headline, not a separate video block,
+     is what a visitor lands on. */
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
   background: var(--bg);
 }
+/* As a flex item, .wrap would shrink to its content; it needs the full
+   row so the two-column grid inside it gets its width. */
+.hero > .hero-inner { width: 100%; }
 
-.video-intro-video {
+/* The loop runs behind the hero content. It is almost black on average,
+   so it reads as texture under the headline rather than competing with
+   it; the scrim below keeps the copy legible when a bright frame passes. */
+.hero-video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  z-index: 0;
+  /* Held back so the loop's brighter frames, which carry their own big
+     type, stay texture and never fight the headline for attention. */
+  opacity: 0.5;
 }
 
-.video-intro::after {
-  /* Soft fade at the seam so the cut into the headline section below doesn't feel abrupt. */
-  content: "";
+.hero-scrim {
   position: absolute;
-  inset: auto 0 0 0;
-  height: 22%;
-  background: linear-gradient(180deg, transparent 0%, var(--bg) 100%);
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(13, 18, 16, 0.82) 0%, rgba(13, 18, 16, 0.55) 48%, rgba(13, 18, 16, 0.2) 100%),
+    linear-gradient(180deg, rgba(13, 18, 16, 0.35) 0%, transparent 30%, transparent 70%, var(--bg) 100%);
 }
 @media (max-width: 860px) {
-  .video-intro::after { height: 12%; }
+  .hero-scrim {
+    background:
+      linear-gradient(180deg, rgba(13, 18, 16, 0.7) 0%, rgba(13, 18, 16, 0.6) 60%, var(--bg) 100%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .video-intro { display: none; }
+  .hero-video { display: none; }
 }
 
 .hero-glow {
