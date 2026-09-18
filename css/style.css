@@ -1309,13 +1309,20 @@ a { color: inherit; text-decoration: none; }
 }
 .mw-tooltip.mw-tooltip-visible { opacity: 1; }
 
-/* On a phone the card is under 300px wide and the layer the tooltip is
-   positioned in runs wider than the card itself, so a floating tooltip
-   near either end of the line has nowhere to sit without overhanging the
-   edge. It would only repeat the figure already shown in the headline
-   and the month in the button above, so it stands down at this size. */
+/* The tooltip stands on a phone too. It was hidden while the layer it
+   sits in ran wider than the card, which left it nowhere to go near
+   either end of the line; that was the grid blowout, now fixed, so it
+   comes back. Two changes make it behave at this size: it drops the
+   position transition, because the script measures the tooltip to decide
+   which side to anchor on and a moving target reports the position it is
+   leaving; and it sits tighter, since the card is under 300px wide. */
 @media (max-width: 640px) {
-  .mw-tooltip { display: none; }
+  .mw-tooltip {
+    transition: opacity 200ms var(--ease-out);
+    padding: 6px 9px;
+  }
+  .mw-tooltip b { font-size: 12px; }
+  .mw-tooltip span { font-size: 9.5px; }
 }
 .mw-tooltip b { display: block; font-size: 12.5px; color: var(--text); }
 .mw-tooltip span { font-size: 10px; color: var(--text-faint); }
@@ -1515,11 +1522,42 @@ a { color: inherit; text-decoration: none; }
   .mw-footer,
   .mw-chart,
   .mw-chart-labels { min-width: 0; }
-  .mw-head { gap: var(--space-2) var(--space-3); }
   .mw-title { min-width: 0; }
-  .mw-head { grid-row: 1; }
   .mw-headline { grid-row: 2; }
   .mw-footer { grid-row: 3; gap: var(--space-2) var(--space-4); }
+
+  /* --- the widget as a thing you touch rather than point at --- */
+
+  /* The title takes its own line and the controls sit under it, so the
+     trend and the period button are not competing for a 244px row. */
+  .mw-head {
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+  }
+  .mw-period-select { justify-self: start; }
+
+  /* This was an 18px-tall control, well under the size a thumb can
+     reliably hit. It now reads as a button and is big enough to press. */
+  .mw-period-btn {
+    min-height: 38px;
+    padding: 8px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    color: var(--text);
+    font-size: 12px;
+  }
+  .mw-period-menu { left: 0; right: auto; }
+  .mw-period-option { min-height: 40px; }
+
+  /* Points large enough to aim at, and an active one that is obvious. */
+  .mw-dot { r: 5; }
+  .mw-dot.mw-dot-active { r: 7; }
+  .mw-dot-hit { width: 40px; height: 40px; }
+
   .mw-chart,
   .mw-chart-labels {
     /* Same grid cell so the chart line/bars and the interactive dots +
@@ -1529,8 +1567,10 @@ a { color: inherit; text-decoration: none; }
     grid-column: 1;
     inset: auto;
     width: 100%;
-    height: 150px;
-    margin-top: var(--space-4);
+    /* Taller than the 150px it was, so the line has room to read and a
+       tooltip sitting above a high point is not pressed into the stats. */
+    height: 168px;
+    margin-top: var(--space-5);
   }
   .mw-dots {
     -webkit-mask-image: linear-gradient(to bottom, transparent 40%, black 85%);
