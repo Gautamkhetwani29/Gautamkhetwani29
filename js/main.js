@@ -115,6 +115,10 @@
   const countEls = document.querySelectorAll("[data-count-to]");
 
   function animateCount(el) {
+    // A widget whose period the reader has already chosen owns its own
+    // value. Without this, the count-up could land after that choice and
+    // put one month's revenue above another month's spend.
+    if (el.dataset.locked === "1") return;
     const target = parseFloat(el.getAttribute("data-count-to"));
     const decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
     const prefix = el.getAttribute("data-prefix") || "";
@@ -125,6 +129,9 @@
     const fmt = (n) => (decimals > 0 ? n.toFixed(decimals) : Math.round(n).toLocaleString("en-IN"));
 
     function frame(now) {
+      // The reader may take a period over mid-count; their choice wins,
+      // so stop writing rather than finishing on top of it.
+      if (el.dataset.locked === "1") return;
       const elapsed = now - start;
       const t = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
@@ -500,15 +507,21 @@
       else openMenu();
     });
 
+    // The reader's choice outranks the count-up animation. See animateCount.
+    function choose(index) {
+      roasValue.dataset.locked = "1";
+      selectQuarter(index);
+    }
+
     options.forEach((opt) => {
       opt.addEventListener("click", () => {
-        selectQuarter(Number(opt.getAttribute("data-quarter-index")));
+        choose(Number(opt.getAttribute("data-quarter-index")));
         closeMenu();
       });
       opt.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          selectQuarter(Number(opt.getAttribute("data-quarter-index")));
+          choose(Number(opt.getAttribute("data-quarter-index")));
           closeMenu();
         }
       });
@@ -516,12 +529,12 @@
 
     dots.forEach((dot) => {
       dot.addEventListener("click", () => {
-        selectQuarter(Number(dot.getAttribute("data-quarter-index")));
+        choose(Number(dot.getAttribute("data-quarter-index")));
       });
     });
     hitDots.forEach((hit) => {
       hit.addEventListener("click", () => {
-        selectQuarter(Number(hit.getAttribute("data-quarter-index")));
+        choose(Number(hit.getAttribute("data-quarter-index")));
       });
     });
 
@@ -533,6 +546,163 @@
     });
 
     selectQuarter(3);
+  })();
+
+  /* ---------------- Piu Snooze monthly widget ----------------
+     Same interaction as the nursery widget above: pick a month from the
+     dropdown or click a point on the line, and the figures below follow.
+
+     Kept as its own block rather than folded together with the nursery
+     one. They chart different things — revenue here, ROAS there — and a
+     shared abstraction would have to carry both, for one caller each. */
+  (() => {
+    const widget = document.getElementById("piuWidget");
+    if (!widget) return;
+
+    const months = JSON.parse(widget.getAttribute("data-months"));
+    const baselineRoas = parseFloat(months[0].roas);
+    const VB_W = 300;
+    const VB_H = 140;
+
+    const select = document.getElementById("piuPeriodSelect");
+    const btn = document.getElementById("piuPeriodBtn");
+    const menu = document.getElementById("piuPeriodMenu");
+    const periodLabel = document.getElementById("piuPeriodLabel");
+    const trend = document.getElementById("piuTrend");
+    const trendPct = document.getElementById("piuTrendPct");
+    const revenueValue = document.getElementById("piuRevenueValue");
+    const spendVal = document.getElementById("piuSpendVal");
+    const ordersVal = document.getElementById("piuOrdersVal");
+    const roasVal = document.getElementById("piuRoasVal");
+    const tooltip = document.getElementById("piuTooltip");
+    const tooltipVal = document.getElementById("piuTooltipVal");
+    const tooltipLabel = document.getElementById("piuTooltipLabel");
+    const dots = widget.querySelectorAll(".mw-dot");
+    const hitDots = widget.querySelectorAll(".mw-dot-hit");
+    const options = menu.querySelectorAll(".mw-period-option");
+
+    function positionTooltip(cx, cy) {
+      tooltip.style.setProperty("--tt-tx", "-50%");
+      tooltip.style.setProperty("--tt-ty", "-130%");
+      tooltip.style.left = `${(cx / VB_W) * 100}%`;
+      tooltip.style.top = `${(cy / VB_H) * 100}%`;
+
+      const widgetRect = widget.getBoundingClientRect();
+      const pad = 10;
+      let ttRect = tooltip.getBoundingClientRect();
+
+      if (ttRect.right > widgetRect.right - pad) {
+        tooltip.style.setProperty("--tt-tx", "-100%");
+      } else if (ttRect.left < widgetRect.left + pad) {
+        tooltip.style.setProperty("--tt-tx", "0%");
+      }
+
+      ttRect = tooltip.getBoundingClientRect();
+      if (ttRect.top < widgetRect.top + pad) {
+        tooltip.style.setProperty("--tt-ty", "30%");
+      }
+    }
+
+    function selectMonth(index) {
+      const m = months[index];
+
+      revenueValue.textContent = m.revenue;
+      spendVal.textContent = m.spend;
+      ordersVal.textContent = m.orders;
+      periodLabel.textContent = `${m.label} 2025`;
+      tooltipVal.textContent = m.revenue;
+      tooltipLabel.textContent = `${m.label} 2025`;
+
+      trend.classList.remove("mw-trend-neutral", "mw-trend-down");
+
+      if (m.roas === null) {
+        // September: no ads ran, so there is no return to divide.
+        roasVal.textContent = "—";
+        trend.classList.add("mw-trend-neutral");
+        trendPct.textContent = "No spend";
+      } else {
+        roasVal.textContent = `${m.roas}x`;
+        if (index === 0) {
+          trend.classList.add("mw-trend-neutral");
+          trendPct.textContent = "Baseline";
+        } else {
+          const pct = Math.round(((parseFloat(m.roas) - baselineRoas) / baselineRoas) * 100);
+          if (pct < 0) trend.classList.add("mw-trend-down");
+          trendPct.textContent = `${pct > 0 ? "+" : "−"}${Math.abs(pct)}%`;
+        }
+      }
+
+      dots.forEach((dot) => {
+        const isActive = Number(dot.getAttribute("data-month-index")) === index;
+        dot.classList.toggle("mw-dot-active", isActive);
+        if (isActive) {
+          positionTooltip(parseFloat(dot.getAttribute("cx")), parseFloat(dot.getAttribute("cy")));
+        }
+      });
+
+      options.forEach((opt) => {
+        opt.setAttribute(
+          "aria-selected",
+          String(Number(opt.getAttribute("data-month-index")) === index)
+        );
+      });
+    }
+
+    function closeMenu() {
+      select.classList.remove("mw-open");
+      btn.setAttribute("aria-expanded", "false");
+    }
+    function openMenu() {
+      select.classList.add("mw-open");
+      btn.setAttribute("aria-expanded", "true");
+    }
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (select.classList.contains("mw-open")) closeMenu();
+      else openMenu();
+    });
+
+    // Once the reader picks a month, that value is theirs, not the
+    // count-up animation's. See animateCount.
+    function choose(index) {
+      revenueValue.dataset.locked = "1";
+      selectMonth(index);
+    }
+
+    options.forEach((opt) => {
+      const pick = () => {
+        choose(Number(opt.getAttribute("data-month-index")));
+        closeMenu();
+      };
+      opt.addEventListener("click", pick);
+      opt.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          pick();
+        }
+      });
+    });
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        choose(Number(dot.getAttribute("data-month-index")));
+      });
+    });
+    hitDots.forEach((hit) => {
+      hit.addEventListener("click", () => {
+        choose(Number(hit.getAttribute("data-month-index")));
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!select.contains(e.target)) closeMenu();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+
+    selectMonth(4);
   })();
 
   /* ---------------- Case-study intro videos ----------------

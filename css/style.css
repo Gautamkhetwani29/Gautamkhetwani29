@@ -238,6 +238,86 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+/* ---------- light travelling the primary button's edge ----------
+   A cone of light pointed at one angle, wrapped round the button and
+   turning continuously, so one bright arc makes its way along the edge.
+
+   It is painted into the button's own background as a second layer, in
+   the border box, rather than onto a pseudo-element. That matters: these
+   properties are declared inherits: false, so they never reach a
+   pseudo-element, and a gradient placed there would sit frozen at the
+   starting angle.
+
+   Nothing sits over the face of the button. The fill, the label colour
+   and the hover are exactly as they were, so the button keeps the weight
+   it needs as the one booking control on the page. */
+@property --shine-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@property --shine-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@property --shine-percent { syntax: "<percentage>"; initial-value: 6%; inherits: false; }
+@property --shine-colour { syntax: "<color>"; initial-value: #ffffff; inherits: false; }
+
+.btn-primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--accent), var(--accent)) padding-box,
+    conic-gradient(
+      from calc(var(--shine-angle) - var(--shine-offset)),
+      transparent,
+      rgba(255, 255, 255, 0.5) var(--shine-percent),
+      var(--shine-colour) calc(var(--shine-percent) * 2),
+      rgba(255, 255, 255, 0.5) calc(var(--shine-percent) * 3),
+      transparent calc(var(--shine-percent) * 4)
+    ) border-box;
+  animation: btn-shine-angle 6s linear infinite;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    --shine-offset 600ms var(--ease-out),
+    --shine-percent 600ms var(--ease-out),
+    --shine-colour 600ms var(--ease-out);
+}
+
+/* The label rides above the bloom below. */
+.btn-primary > span { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; }
+
+/* A soft bloom that lifts from the bottom on hover. It takes the
+   button's own shape, so it has no straight edge of its own to show
+   through the way a square layer would. */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out);
+  background: radial-gradient(120% 150% at 50% 125%, rgba(255, 255, 255, 0.85), transparent 62%);
+}
+
+@media (hover: hover) {
+  .btn-primary:hover {
+    --shine-percent: 18%;
+    --shine-offset: 95deg;
+  }
+  .btn-primary:hover::after { opacity: 0.32; }
+}
+.btn-primary:focus-visible {
+  --shine-percent: 18%;
+  --shine-offset: 95deg;
+}
+.btn-primary:focus-visible::after { opacity: 0.32; }
+
+@keyframes btn-shine-angle { to { --shine-angle: 360deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary { animation: none !important; }
+  .btn-primary::after { display: none; }
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--text);
@@ -1109,6 +1189,20 @@ a { color: inherit; text-decoration: none; }
 .mw-chart { z-index: 0; }
 .mw-chart-labels { z-index: 1; }
 
+/* The chart is an SVG, a replaced element, so with top and bottom both
+   set it still sizes to its own 300:140 ratio rather than stretching to
+   fill. The labels layer is a plain div and did stretch, which left it
+   taller than the chart it sits over — so every dot's hit target and
+   the tooltip were positioned against the wrong height and sat low,
+   by up to 50px on the lowest points. Matching the ratio puts the two
+   layers on the same box. On small screens both are given an explicit
+   height instead, which already matches, and a definite height wins
+   over aspect-ratio. */
+.mw-chart-labels {
+  bottom: auto;
+  aspect-ratio: 300 / 140;
+}
+
 .mw-bar-label {
   position: absolute;
   transform: translateX(-50%);
@@ -1214,6 +1308,15 @@ a { color: inherit; text-decoration: none; }
   transition: opacity 200ms var(--ease-out), left 300ms var(--ease-out), top 300ms var(--ease-out);
 }
 .mw-tooltip.mw-tooltip-visible { opacity: 1; }
+
+/* On a phone the card is under 300px wide and the layer the tooltip is
+   positioned in runs wider than the card itself, so a floating tooltip
+   near either end of the line has nowhere to sit without overhanging the
+   edge. It would only repeat the figure already shown in the headline
+   and the month in the button above, so it stands down at this size. */
+@media (max-width: 640px) {
+  .mw-tooltip { display: none; }
+}
 .mw-tooltip b { display: block; font-size: 12.5px; color: var(--text); }
 .mw-tooltip span { font-size: 10px; color: var(--text-faint); }
 
@@ -1286,6 +1389,11 @@ a { color: inherit; text-decoration: none; }
 .mw-period-option[aria-selected="true"] svg { opacity: 1; }
 
 .mw-trend.mw-trend-neutral { color: var(--text-muted); }
+/* A month that fell against its baseline takes the same amber the
+   before-values use elsewhere, so a drop never reads in the green
+   reserved for results. */
+.mw-trend.mw-trend-down { color: var(--before); }
+.mw-trend.mw-trend-down .mw-trend-icon { transform: rotate(90deg); }
 .mw-trend .mw-trend-icon { transition: transform var(--dur-fast) var(--ease-out); }
 .mw-trend.mw-trend-neutral .mw-trend-icon { transform: rotate(90deg); }
 
