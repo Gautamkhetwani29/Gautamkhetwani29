@@ -962,17 +962,40 @@ a { color: inherit; text-decoration: none; }
 
 /* Two across on a phone, the same shape as the strip under the headline.
    This used to drop to one per row, which turned four figures into a
-   column four cards tall. The cells are half the width here, so the
-   padding comes in, and a before/after pair -- which is a flex row and
-   can be 156px of type -- is allowed to break after the arrow rather
-   than run past the edge of its cell.
+   column four cards tall.
 
-   It sits below the base rules rather than beside the grid rule it
+   A before/after pair has to hold its line here, and that is what sets
+   everything else in this block. The longest, 17.2L -> 30.2L, is 156px
+   of type; inside the card's padding a cell is 114px wide. So the grid is
+   pulled out to the card's edges, which buys 48px and turns it into a
+   band across the card -- hence no side borders and no corner rounding,
+   so it reads as one. Even then the figure has to track the screen: at
+   320px a full-size pair still would not fit, so it scales with the
+   viewport and tops out at the 19px it has everywhere else. The label
+   scales with it to keep the two ranked.
+
+   This sits below the base rules rather than beside the grid rule it
    belongs with, because a media query carries no extra specificity:
    from above, the plain .case-metric padding below simply won. */
 @media (max-width: 480px) {
+  .case-metric-grid {
+    margin-inline: calc(var(--space-4) * -1);
+    border-inline: 0;
+    border-radius: 0;
+  }
   .case-metric { padding: var(--space-4) var(--space-3); }
-  .metric-before-after { flex-wrap: wrap; gap: 2px 8px; }
+  .metric-before-after {
+    flex-wrap: nowrap;
+    gap: 5px;
+    /* Measured, not guessed. A cell is (vw - 34.6) / 2 wide; take off
+       32px of padding and the 22px the arrow and its gaps need, and the
+       longest pair fills 6.64px of what is left per pixel of type. That
+       works out at 7.5vw - 11.3px, so this tracks just under it and
+       stops at the 19px the figure has on every other screen. */
+    font-size: clamp(12px, calc(7.4vw - 11.2px), 19px);
+  }
+  .metric-before-after svg { width: 12px; height: 12px; }
+  .metric-label { font-size: clamp(10.5px, 3vw, 13px); }
 }
 
 .case-proof {
