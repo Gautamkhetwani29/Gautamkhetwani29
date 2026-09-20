@@ -1666,8 +1666,48 @@ a { color: inherit; text-decoration: none; }
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-4);
 }
+/* Below three-across this was a stack of three square screenshots, close
+   to four phone screens of scrolling for one section. It is a row you
+   swipe instead: one card and a peek of the next, which is both the
+   affordance and the reason it stays one card tall.
+
+   Not the logo strip's drifting marquee, though it was the obvious
+   comparison. A logo needs no reading and no tapping; these are messages,
+   and one sliding under a thumb is hard to read and harder to open.
+
+   The row runs to the screen edges, so the negative margin and the
+   padding that puts it back have to match the page gutter at each width
+   -- see .wrap, which changes at 640. */
 @media (max-width: 860px) {
-  .testimonial-grid { grid-template-columns: 1fr; }
+  .testimonial-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: var(--space-3);
+    margin-inline: calc(var(--space-4) * -1);
+    /* Room above and below for the card's shadow: overflow-x on its own
+       still computes overflow-y to auto, so anything outside is clipped. */
+    padding: 4px var(--space-4) var(--space-4);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .testimonial-grid::-webkit-scrollbar { display: none; }
+
+  .testimonial-card {
+    flex: 0 0 min(82%, 320px);
+    scroll-snap-align: center;
+  }
+
+  /* The scroll reveal hides an element until it crosses the viewport.
+     Sideways, the third card never does until it is swiped to, so it
+     would sit invisible and then animate in mid-swipe. */
+  .js .testimonial-card.reveal-up { opacity: 1; transform: none; }
+}
+@media (max-width: 640px) {
+  .testimonial-grid {
+    margin-inline: calc(var(--space-3) * -1);
+    padding-inline: var(--space-3);
+  }
 }
 
 .testimonial-card {
