@@ -924,9 +924,6 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 760px) {
   .case-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 480px) {
-  .case-metric-grid { grid-template-columns: 1fr; }
-}
 
 .case-metric {
   background: var(--surface);
@@ -962,6 +959,21 @@ a { color: inherit; text-decoration: none; }
   font-variant-numeric: tabular-nums;
 }
 .metric-single .unit { font-size: 16px; }
+
+/* Two across on a phone, the same shape as the strip under the headline.
+   This used to drop to one per row, which turned four figures into a
+   column four cards tall. The cells are half the width here, so the
+   padding comes in, and a before/after pair -- which is a flex row and
+   can be 156px of type -- is allowed to break after the arrow rather
+   than run past the edge of its cell.
+
+   It sits below the base rules rather than beside the grid rule it
+   belongs with, because a media query carries no extra specificity:
+   from above, the plain .case-metric padding below simply won. */
+@media (max-width: 480px) {
+  .case-metric { padding: var(--space-4) var(--space-3); }
+  .metric-before-after { flex-wrap: wrap; gap: 2px 8px; }
+}
 
 .case-proof {
   display: grid;
