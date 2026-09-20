@@ -1295,7 +1295,7 @@ a { color: inherit; text-decoration: none; }
 
 .mw-tooltip {
   position: absolute;
-  transform: translate(var(--tt-tx, -50%), var(--tt-ty, -130%));
+  transform: translate(var(--tt-tx, -50%), var(--tt-ty, -130%)) translateY(var(--tt-dy, 0px));
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
@@ -1309,23 +1309,35 @@ a { color: inherit; text-decoration: none; }
 }
 .mw-tooltip.mw-tooltip-visible { opacity: 1; }
 
+.mw-tooltip b { display: block; font-size: 12.5px; color: var(--text); }
+.mw-tooltip span { font-size: 10px; color: var(--text-faint); }
+
 /* The tooltip stands on a phone too. It was hidden while the layer it
    sits in ran wider than the card, which left it nowhere to go near
    either end of the line; that was the grid blowout, now fixed, so it
-   comes back. Two changes make it behave at this size: it drops the
-   position transition, because the script measures the tooltip to decide
-   which side to anchor on and a moving target reports the position it is
-   leaving; and it sits tighter, since the card is under 300px wide. */
+   comes back.
+
+   Three things make it behave at this size. It drops the position
+   transition, because the script measures the tooltip to decide which
+   side to anchor on and a moving target reports the position it is
+   leaving. It sits tighter, since the card is under 300px wide. And it
+   inherits the page's 1.6 line-height, which on two lines of small type
+   built a 59px card inside a 114px chart -- too tall to fit above a low
+   point or below a high one, so it hung out of the chart either way.
+   Setting the leading here keeps it near 38px, which fits both ways.
+
+   This block sits after the base type rules on purpose: a media query
+   adds no specificity, so when it came first the plain .mw-tooltip b
+   rule below simply won and none of the smaller sizes applied. */
 @media (max-width: 640px) {
   .mw-tooltip {
     transition: opacity 200ms var(--ease-out);
-    padding: 6px 9px;
+    padding: 5px 9px;
+    line-height: 1.25;
   }
-  .mw-tooltip b { font-size: 12px; }
-  .mw-tooltip span { font-size: 9.5px; }
+  .mw-tooltip b { font-size: 11.5px; }
+  .mw-tooltip span { font-size: 9px; }
 }
-.mw-tooltip b { display: block; font-size: 12.5px; color: var(--text); }
-.mw-tooltip span { font-size: 10px; color: var(--text-faint); }
 
 /* period / quarter selector */
 .mw-period-select { position: relative; display: inline-flex; align-items: center; }
@@ -1537,7 +1549,11 @@ a { color: inherit; text-decoration: none; }
     gap: var(--space-3);
     align-items: start;
   }
-  .mw-period-select { justify-self: start; }
+  /* The trend and the month pill are flex siblings with nothing between
+     them. On a wide screen the button's own left padding does the
+     separating; here the button is a filled pill, so its edge landed hard
+     against the last character of the percentage. */
+  .mw-period-select { justify-self: start; gap: 10px; }
 
   /* This was an 18px-tall control, well under the size a thumb can
      reliably hit. It now reads as a button and is big enough to press. */
@@ -1553,10 +1569,30 @@ a { color: inherit; text-decoration: none; }
   .mw-period-menu { left: 0; right: auto; }
   .mw-period-option { min-height: 40px; }
 
-  /* Points large enough to aim at, and an active one that is obvious. */
-  .mw-dot { r: 5; }
-  .mw-dot.mw-dot-active { r: 7; }
+  /* Points large enough to aim at, and an active one that is obvious.
+     These read smaller than the numbers suggest: the chart draws at about
+     0.8, so r: 6 lands as a 10px dot. */
+  .mw-dot { r: 6; }
+  .mw-dot.mw-dot-active { r: 8; }
   .mw-dot-hit { width: 40px; height: 40px; }
+
+  /* The line is scaled down with everything else, so it needs a heavier
+     number here to land at the same weight it has on a wide screen. */
+  .mw-line { stroke-width: 3; }
+}
+
+/* r and stroke-width are in the drawing's own units, so they grow with the
+   chart. Sized for a 375px phone, by 640px the same numbers were drawing a
+   27px blob. This band covers the wide end of the small layout -- a large
+   phone on its side, a small tablet -- and brings them back to roughly the
+   size they have on a 375px screen. */
+@media (min-width: 481px) and (max-width: 640px) {
+  .mw-dot { r: 3.5; }
+  .mw-dot.mw-dot-active { r: 5; }
+  .mw-line { stroke-width: 1.8; }
+}
+
+@media (max-width: 640px) {
 
   .mw-chart,
   .mw-chart-labels {
@@ -1567,9 +1603,16 @@ a { color: inherit; text-decoration: none; }
     grid-column: 1;
     inset: auto;
     width: 100%;
-    /* Taller than the 150px it was, so the line has room to read and a
-       tooltip sitting above a high point is not pressed into the stats. */
-    height: 168px;
+    /* The chart is drawn in a 300x140 viewBox with preserveAspectRatio
+       set to none, so whatever shape this box is, the drawing is stretched
+       to fill it. A fixed height gave it 244x168 -- a box half again as
+       tall for its width as the drawing -- so every circle came out an
+       oval, half again as tall as it was wide, and the flat stretches of
+       the line drew thicker than the steep ones. Letting the height follow
+       the width at the drawing's own ratio makes the scale even in both
+       directions: round dots, one line weight. */
+    aspect-ratio: 300 / 140;
+    height: auto;
     margin-top: var(--space-5);
   }
   .mw-dots {

@@ -434,10 +434,13 @@
     function positionTooltip(cx, cy) {
       tooltip.style.setProperty("--tt-tx", "-50%");
       tooltip.style.setProperty("--tt-ty", "-130%");
+      tooltip.style.setProperty("--tt-dy", "0px");
       tooltip.style.left = `${(cx / VB_W) * 100}%`;
       tooltip.style.top = `${(cy / VB_H) * 100}%`;
 
       const widgetRect = widget.getBoundingClientRect();
+      const chartRect = tooltip.parentElement.getBoundingClientRect();
+      const footerRect = widget.querySelector(".mw-footer").getBoundingClientRect();
       const pad = 10;
       let ttRect = tooltip.getBoundingClientRect();
 
@@ -447,9 +450,33 @@
         tooltip.style.setProperty("--tt-tx", "0%");
       }
 
+      /* The card sits above its point. On a wide screen the chart has a
+         column to itself and the space above it is empty, so the only
+         thing it can run out of is the card's own edge. On a phone the
+         chart is a block underneath the figures, so "above the point" was
+         "on top of the numbers" -- the value card landed across the stats
+         row and the two sets of digits ran together. Where the chart is
+         stacked like that, the chart's own top is the ceiling and the card
+         drops below the point instead. */
+      const stacked = chartRect.top >= footerRect.bottom;
+      const ceiling = (stacked ? chartRect.top : widgetRect.top) + pad;
+      const floor = (stacked ? chartRect.bottom : widgetRect.bottom) - pad;
+
+      /* Above the point, else below it, else above and pushed down to the
+         ceiling. The third case is for a narrow phone: the chart keeps the
+         drawing's proportions, so on a 320px screen it is only 88px tall
+         and the card fits neither way. Pinning it to the top of the chart
+         leaves it clear of everything but the top edge of its own point,
+         which beats hanging out of the chart. */
       ttRect = tooltip.getBoundingClientRect();
-      if (ttRect.top < widgetRect.top + pad) {
+      if (ttRect.top < ceiling) {
         tooltip.style.setProperty("--tt-ty", "30%");
+        ttRect = tooltip.getBoundingClientRect();
+        if (ttRect.bottom > floor) {
+          tooltip.style.setProperty("--tt-ty", "-130%");
+          ttRect = tooltip.getBoundingClientRect();
+          tooltip.style.setProperty("--tt-dy", (ceiling - ttRect.top).toFixed(1) + "px");
+        }
       }
     }
 
@@ -584,10 +611,13 @@
     function positionTooltip(cx, cy) {
       tooltip.style.setProperty("--tt-tx", "-50%");
       tooltip.style.setProperty("--tt-ty", "-130%");
+      tooltip.style.setProperty("--tt-dy", "0px");
       tooltip.style.left = `${(cx / VB_W) * 100}%`;
       tooltip.style.top = `${(cy / VB_H) * 100}%`;
 
       const widgetRect = widget.getBoundingClientRect();
+      const chartRect = tooltip.parentElement.getBoundingClientRect();
+      const footerRect = widget.querySelector(".mw-footer").getBoundingClientRect();
       const pad = 10;
       let ttRect = tooltip.getBoundingClientRect();
 
@@ -597,9 +627,33 @@
         tooltip.style.setProperty("--tt-tx", "0%");
       }
 
+      /* The card sits above its point. On a wide screen the chart has a
+         column to itself and the space above it is empty, so the only
+         thing it can run out of is the card's own edge. On a phone the
+         chart is a block underneath the figures, so "above the point" was
+         "on top of the numbers" -- the value card landed across the stats
+         row and the two sets of digits ran together. Where the chart is
+         stacked like that, the chart's own top is the ceiling and the card
+         drops below the point instead. */
+      const stacked = chartRect.top >= footerRect.bottom;
+      const ceiling = (stacked ? chartRect.top : widgetRect.top) + pad;
+      const floor = (stacked ? chartRect.bottom : widgetRect.bottom) - pad;
+
+      /* Above the point, else below it, else above and pushed down to the
+         ceiling. The third case is for a narrow phone: the chart keeps the
+         drawing's proportions, so on a 320px screen it is only 88px tall
+         and the card fits neither way. Pinning it to the top of the chart
+         leaves it clear of everything but the top edge of its own point,
+         which beats hanging out of the chart. */
       ttRect = tooltip.getBoundingClientRect();
-      if (ttRect.top < widgetRect.top + pad) {
+      if (ttRect.top < ceiling) {
         tooltip.style.setProperty("--tt-ty", "30%");
+        ttRect = tooltip.getBoundingClientRect();
+        if (ttRect.bottom > floor) {
+          tooltip.style.setProperty("--tt-ty", "-130%");
+          ttRect = tooltip.getBoundingClientRect();
+          tooltip.style.setProperty("--tt-dy", (ceiling - ttRect.top).toFixed(1) + "px");
+        }
       }
     }
 
