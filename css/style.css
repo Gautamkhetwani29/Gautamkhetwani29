@@ -498,6 +498,21 @@ a { color: inherit; text-decoration: none; }
   .video-intro::after { height: 12%; }
 }
 
+/* The phone clip is landscape now, so the band takes the clip's own shape
+   and becomes a short strip rather than a whole screen. It used to be a
+   portrait cut filling 100svh -- about 810px to scroll past before the
+   headline, on the device with the least room to spare.
+   At exactly 16/9 there is also nothing left to crop: the box is the
+   frame's shape, so cover and contain are the same thing here and the
+   whole composition is on screen. */
+@media (max-aspect-ratio: 4/3) {
+  .video-intro {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+  .video-intro::after { height: 20%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .video-intro { display: none; }
 }

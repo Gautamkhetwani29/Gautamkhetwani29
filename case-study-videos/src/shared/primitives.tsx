@@ -75,18 +75,21 @@ export const SceneShell: React.FC<SceneShellProps> = ({
 };
 
 // Mono label with the green dot, like .eyebrow / .case-tag on the site.
-export const Eyebrow: React.FC<{ children: React.ReactNode; delay?: number }> = ({
-  children,
-  delay = 0,
-}) => (
+// `size` defaults to the case-study scale; the hero loop's phone cut runs
+// it larger, since that frame is shown about 390px wide.
+export const Eyebrow: React.FC<{
+  children: React.ReactNode;
+  delay?: number;
+  size?: number;
+}> = ({ children, delay = 0, size = 28 }) => (
   <Rise name="Eyebrow" delay={delay} distance={12}>
     <div
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 16,
+        gap: size * 0.57,
         fontFamily: fonts.mono,
-        fontSize: 28,
+        fontSize: size,
         letterSpacing: "0.12em",
         textTransform: "uppercase",
         color: colors.accentDim,
@@ -94,11 +97,12 @@ export const Eyebrow: React.FC<{ children: React.ReactNode; delay?: number }> = 
     >
       <span
         style={{
-          width: 12,
-          height: 12,
+          width: size * 0.43,
+          height: size * 0.43,
           borderRadius: 999,
           backgroundColor: colors.accent,
           boxShadow: `0 0 18px ${colors.accent}`,
+          flexShrink: 0,
         }}
       />
       {children}
