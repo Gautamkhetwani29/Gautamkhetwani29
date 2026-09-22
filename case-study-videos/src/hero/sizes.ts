@@ -32,21 +32,16 @@ export type HeroSize = {
   statPadX: number;
   gridRadius: number;
 
-  climbGap: number;
-  climbLabel: number;
-  climbCounter: number;
-  climbUnit: number;
-  pillText: number;
-  pillIcon: number;
-  pillPadY: number;
-  pillPadX: number;
-  chartW: number;
-  chartH: number;
-  chartStroke: number;
-  chartDot: number;
-  chartDotLast: number;
-  chartValue: number;
-  chartAxis: number;
+  logoTile: number;
+  logoGap: number;
+  logoRadius: number;
+  logoCaption: number;
+
+  baValue: number;
+  baLabel: number;
+  baArrow: number;
+  baGap: number;
+  baColGap: number;
 
   closeSize: number;
   closeGap: number;
@@ -72,21 +67,20 @@ export const desktopSize: HeroSize = {
   statPadX: 34,
   gridRadius: 28,
 
-  climbGap: 80,
-  climbLabel: 34,
-  climbCounter: 140,
-  climbUnit: 88,
-  pillText: 28,
-  pillIcon: 26,
-  pillPadY: 14,
-  pillPadX: 28,
-  chartW: 840,
-  chartH: 300,
-  chartStroke: 5,
-  chartDot: 8,
-  chartDotLast: 11,
-  chartValue: 32,
-  chartAxis: 26,
+  // Two rows, six then five: 6 x 150 + 5 x 44 = 1120 inside 1420.
+  logoTile: 150,
+  logoGap: 44,
+  logoRadius: 26,
+  logoCaption: 28,
+
+  // The wider pair is "₹1,584 → ₹672": 5.42px per px of font size for the
+  // two figures, plus the arrow and its gaps. At 96 that is 620px, inside
+  // the 710px column.
+  baValue: 96,
+  baLabel: 34,
+  baArrow: 52,
+  baGap: 26,
+  baColGap: 100,
 
   // The closing line runs as one row. Measured in Space Grotesk 600 at
   // -0.015em, it is 16.75px wide for every px of font size, so 78px comes
@@ -104,7 +98,8 @@ export const phoneSize: HeroSize = {
   markSize: 150,
   markRadius: 34,
   markFont: 66,
-  nameSize: 190,
+  // Mark + gap + 8.25 x this has to stay inside 1700: 150 + 50 + 1403.
+  nameSize: 170,
   identityGap: 40,
   eyebrow: 52,
 
@@ -115,21 +110,19 @@ export const phoneSize: HeroSize = {
   statPadX: 30,
   gridRadius: 36,
 
-  climbGap: 70,
-  climbLabel: 56,
-  climbCounter: 190,
-  climbUnit: 120,
-  pillText: 44,
-  pillIcon: 40,
-  pillPadY: 20,
-  pillPadX: 38,
-  chartW: 900,
-  chartH: 340,
-  chartStroke: 8,
-  chartDot: 12,
-  chartDotLast: 16,
-  chartValue: 46,
-  chartAxis: 40,
+  // 6 x 170 + 5 x 40 = 1220 inside 1700. At 170 a tile lands about 34px
+  // on a phone -- small, but a logo is a shape and still reads.
+  logoTile: 170,
+  logoGap: 40,
+  logoRadius: 30,
+  logoCaption: 46,
+
+  // At 120 the wider pair comes to 780px inside an 850px column.
+  baValue: 120,
+  baLabel: 52,
+  baArrow: 66,
+  baGap: 30,
+  baColGap: 60,
 
   // Nothing is cropped on a phone, so this scene alone can run wider than
   // the rest: 70px of padding leaves 1780, and 100px of type comes to

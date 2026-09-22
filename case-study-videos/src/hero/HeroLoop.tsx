@@ -4,7 +4,8 @@ import { fade } from "@remotion/transitions/fade";
 import { LoopBackground } from "./LoopBackground";
 import { SceneIdentity } from "./SceneIdentity";
 import { SceneNumbers } from "./SceneNumbers";
-import { SceneClimb } from "./SceneClimb";
+import { SceneLogos } from "./SceneLogos";
+import { SceneBeforeAfter } from "./SceneBeforeAfter";
 import { SceneClose } from "./SceneClose";
 import { desktopSize, phoneSize, type HeroSize } from "./sizes";
 
@@ -13,10 +14,18 @@ import { desktopSize, phoneSize, type HeroSize } from "./sizes";
 // transition only ever dissolves background into background.
 export const FADE = 8;
 
+// Who -> who for -> how much -> what changed -> the line.
+//
+// The quarterly ROAS chart that used to sit between the totals and the
+// close is gone: 4.52x is already one of the four figures, so the chart
+// was a second telling of the same number, and dropping it keeps this
+// near 18 seconds. A hero loop that runs long is a loop whose later
+// beats nobody reaches.
 export const scenes = {
   identity: 96,
+  logos: 114,
   numbers: 126,
-  climb: 132,
+  beforeAfter: 126,
   close: 120,
 };
 
@@ -47,12 +56,16 @@ const Loop: React.FC<{ s: HeroSize }> = ({ s }) => (
         <SceneIdentity durationInFrames={scenes.identity} s={s} />
       </TransitionSeries.Sequence>
       {cut}
+      <TransitionSeries.Sequence name="Trusted by" durationInFrames={scenes.logos}>
+        <SceneLogos durationInFrames={scenes.logos} s={s} />
+      </TransitionSeries.Sequence>
+      {cut}
       <TransitionSeries.Sequence name="Track record" durationInFrames={scenes.numbers}>
         <SceneNumbers durationInFrames={scenes.numbers} s={s} />
       </TransitionSeries.Sequence>
       {cut}
-      <TransitionSeries.Sequence name="The climb" durationInFrames={scenes.climb}>
-        <SceneClimb durationInFrames={scenes.climb} s={s} />
+      <TransitionSeries.Sequence name="Before and after" durationInFrames={scenes.beforeAfter}>
+        <SceneBeforeAfter durationInFrames={scenes.beforeAfter} s={s} />
       </TransitionSeries.Sequence>
       {cut}
       <TransitionSeries.Sequence name="Close" durationInFrames={scenes.close}>

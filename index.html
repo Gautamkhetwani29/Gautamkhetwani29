@@ -78,7 +78,7 @@
         var isNarrow = window.matchMedia("(max-aspect-ratio: 4/3)").matches;
         var src = isNarrow ? "assets/video/hero-loop-mobile.mp4" : "assets/video/hero-loop.mp4";
 
-        // The loop is decorative — 1.1MB on a desktop, 208KB on a phone —
+        // The loop is decorative — 1.4MB on a desktop, 419KB on a phone —
         // and it opens on a frame that is almost pure black, the same
         // colour this section already paints instantly. Fetching it up
         // front only starves the real content of bandwidth, so it waits
